@@ -5,11 +5,12 @@ import (
 	"math/rand"
 	"testing"
 	"time"
+
 )
 
 func TestArray(t *testing.T) {
 	// arrayDemo1()
-	sliceDemo3()
+	sliceDemo4()
 }
 
 // n := [10]int{} 完成声明和初始化，等价于 var n [10]int
@@ -54,6 +55,16 @@ func sliceDemo3() {
 	m = append(m[:idx], m[idx+1:]...)
 	fmt.Println(e)
 	PrintSlice(m)
+}
+
+func sliceDemo4 () {
+	var m []int
+	// m := []int{}
+	for _, i := range m {
+		fmt.Println(i)
+	}
+	fmt.Println(len(m))
+	fmt.Println(m == nil)
 }
 
 func PrintSlice(x []int) {
