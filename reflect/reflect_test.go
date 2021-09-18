@@ -31,10 +31,26 @@ func (d *Dog) String() string {
 	return fmt.Sprintf("Name:%s, Age:%d, Kind:%d", d.Name, d.Age, d.Kind)
 }
 
-// func (d *Dog) Eat(food string) int {
-// 	d.Food = append(d.Food, food)
-// 	return len(d.Food)
-// }
+type NewInt int
+
+type NewDogIn struct {
+	Name   string `validate:"required"`
+	Age    NewInt
+	Food   []string
+	Parent map[string]string
+}
+
+func (d *Dog) NewDog(in NewDogIn) {
+}
+
+func (d *Dog) Eat(food string) int {
+	d.Food = append(d.Food, food)
+	return len(d.Food)
+}
+
+func (d *Dog) SetParent(parent map[string]string) {
+	d.Parent = parent
+}
 
 type Arg []interface{}
 
@@ -50,18 +66,77 @@ func (st *St) SetUpSuite() {
 }
 
 func (st *St) TestMethod() {
-	vDog, tDog := reflect.ValueOf(st.d), reflect.TypeOf(st.d)
-	tMethod := tDog.Method(0)
-	fmt.Println(tMethod.Name)
-	vMethod := vDog.MethodByName(tMethod.Name)
-	in := []reflect.Value{reflect.ValueOf([]interface{}{1, 2, 3})}
-	vMethod.Call(in)
+	v, t := reflect.ValueOf(st.d), reflect.TypeOf(st.d)
+	for i := 0; i < t.NumMethod(); i++ {
+		name := t.Method(i).Name
+		if name != "NewDog" {
+			continue
+		}
+		method := v.MethodByName(name)
+		numIn := method.Type().NumIn()
+		fmt.Println(name)
+		for j := 0; j < numIn; j++ {
+			t1 := method.Type().In(j)
+			fmt.Println(t1)
+			for j := 0; j < t1.NumField(); j++ {
+				field := t1.Field(j)
+				k := field.Type.Kind()
+				sk := k.String()
+				if k == reflect.Slice {
+					sk = fmt.Sprintf("[%s]", field.Type.Elem().String())
+				} else if k == reflect.Map {
+					sk = fmt.Sprintf("{%s:%s}", field.Type.Key().Kind().String(), field.Type.Elem().Kind().String())
+				}
+
+				require := field.Tag.Get("validate")
+				if require == "required" {
+					sk += ", required"
+				}
+
+				// sk := ""
+				// switch k {
+				// case reflect.Int, reflect.Int64:
+				// 	sk = "int"
+				// case reflect.String:
+				// 	sk = "str"
+				// case reflect.Slice:
+				// 	if field.Type.Elem().Kind() == reflect.Int || field.Type.Elem().Kind() == reflect.Int64 {
+				// 		sk = "[int,]"
+				// 	} else {
+				// 		sk = "[str,]"
+				// 	}
+				// case reflect.Map:
+				// 	kk, vk := "", ""
+				// 	if field.Type.Key().Kind() == reflect.Int || field.Type.Key().Kind() == reflect.Int64 {
+				// 		kk = "int"
+				// 	} else {
+				// 		kk = "str"
+				// 	}
+				// 	if field.Type.Elem().Kind() == reflect.Int || field.Type.Elem().Kind() == reflect.Int64 {
+				// 		vk = "int"
+				// 	} else {
+				// 		vk = "str"
+				// 	}
+				// 	sk = fmt.Sprintf("{%s:%s,}", kk, vk)
+				// }
+				fmt.Println("\t", field.Name, sk)
+			}
+		}
+		fmt.Println()
+	}
+}
+
+// slice和element类型
+func (st *St) TestSliceElem() {
+	intSlice := []int{}
+	strSlice := []string{}
+
+	t1, t2 := reflect.TypeOf(intSlice), reflect.TypeOf(strSlice)
+	fmt.Println(t1, t2)
 }
 
 func (st *St) TestField() {
-
 }
-
 
 func (st *St) TestFuncIn() {
 	tDog := reflect.TypeOf(st.d)
