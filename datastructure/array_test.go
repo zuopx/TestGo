@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"testing"
 	"time"
-
 )
 
 func TestArray(t *testing.T) {
@@ -57,14 +56,14 @@ func sliceDemo3() {
 	PrintSlice(m)
 }
 
-func sliceDemo4 () {
-	var m []int
-	// m := []int{}
-	for _, i := range m {
-		fmt.Println(i)
+func sliceDemo4() {
+	a := []int{1, 2, 3}
+	num := 5
+	if num > len(a) {
+		num = len(a)
 	}
-	fmt.Println(len(m))
-	fmt.Println(m == nil)
+	a = a[:num]
+	PrintSlice(a)
 }
 
 func PrintSlice(x []int) {
