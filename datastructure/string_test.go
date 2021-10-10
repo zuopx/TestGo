@@ -24,7 +24,7 @@ func (st *StringTestSuite) TestFormat() {
 	f := 3.14
 	s := "abc"
 	sc := bson.E{"name", "percy"}               // struct
-	l := []interface{}{b, i, f, s, sc}                 // slice
+	l := []interface{}{b, i, f, s, sc}          // slice
 	m := map[int]string{1: "A", 2: "B", 3: "C"} // map
 
 	st.Equal("true", fmt.Sprintf("%v", b))
