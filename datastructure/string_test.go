@@ -24,12 +24,12 @@ func (st *StringTestSuite) TestFormat() {
 	f := 3.14
 	s := "abc"
 	sc := bson.E{"name", "percy"}               // struct
-	l := []interface{}{b, i, f, s, sc}                 // slice
+	l := []interface{}{b, i, f, s, sc, &sc}     // slice
 	m := map[int]string{1: "A", 2: "B", 3: "C"} // map
 
 	st.Equal("true", fmt.Sprintf("%v", b))
 	st.Equal("10", fmt.Sprintf("%d", i))
 	st.Equal("3.140000", fmt.Sprintf("%f", f))
 	st.Equal("3.140", fmt.Sprintf("%.3f", f))
-	fmt.Printf("%+v\n%v\n%+v\n", l, m, sc)
+	fmt.Printf("%s\n%v\n%+v\n", l, m, sc)
 }
