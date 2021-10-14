@@ -10,7 +10,7 @@ import (
 )
 
 func TestGeneric(t *testing.T) {
-	if r, err := genericAdd(1, 2); err != nil {
+	if r, err := genericAdd(int8(1), int8(2)); err != nil {
 		fmt.Print(err)
 	} else {
 		fmt.Println(r.(int))
