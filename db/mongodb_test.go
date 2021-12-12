@@ -36,6 +36,7 @@ func (st *ST) SetupSuite() {
 		log.Fatal(err)
 	}
 
+	client.Database("test").Collection("trainers").Drop(context.TODO())
 	st.coll = client.Database("test").Collection("trainers")
 }
 
@@ -90,4 +91,16 @@ func (st *ST) TestUpdate() {
 	var rtn Trainer
 	st.coll.FindOneAndUpdate(context.TODO(), filter, update, opts).Decode(&rtn)
 	fmt.Println(rtn)
+}
+
+// 查询语句内外都是map
+func (st *ST) TestFindFilterIn() {
+	ctx := context.TODO()
+
+	st.coll.InsertOne(ctx, bson.M{"name": "Brock"})
+	st.coll.InsertOne(ctx, bson.M{"name": "Misty"})
+
+	filter := bson.D{{"name", bson.D{{"$in", []interface{}{"Brock", "Misty"}}}}}
+	count, _ := st.coll.CountDocuments(context.TODO(), filter)
+	fmt.Println(count)
 }
